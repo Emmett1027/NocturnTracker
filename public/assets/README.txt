@@ -1,0 +1,2 @@
+Drop your art here as `nocturn-background.jpg` — the hero picks it up automatically.
+See README.md ("Background image").

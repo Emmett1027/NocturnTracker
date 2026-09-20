@@ -1,0 +1,15 @@
+{
+  "name": "nocturn-players",
+  "version": "1.0.0",
+  "description": "Nocturn Players — combined live player count for the Nocturn Minecraft network (Minehut + MineKeep).",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "keywords": ["minecraft", "minehut", "minekeep", "nocturn"],
+  "license": "MIT"
+}

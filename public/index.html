@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nocturn Players — Live Minehut + MineKeep count</title>
+  <meta name="description" content="Live combined player count for the Nocturn Minecraft network across Minehut (NocturnMH) and MineKeep (Nocturn)." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0f16'/%3E%3Cpath d='M20.5 6.5A8.5 8.5 0 1 0 25.5 20 6.8 6.8 0 0 1 20.5 6.5Z' fill='%23e5a83b'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#players">Skip to player count</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="wordmark" href="./" aria-label="Nocturn home">
+        <svg class="wordmark-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <rect width="32" height="32" rx="7" fill="#161c26"/>
+          <path d="M20.5 6.5A8.5 8.5 0 1 0 25.5 20 6.8 6.8 0 0 1 20.5 6.5Z" fill="#e5a83b"/>
+        </svg>
+        <span class="wordmark-text">NOCTURN</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="#players" class="nav-link is-active">Players</a>
+        <a href="#alert" class="nav-link">Alerts</a>
+        <a href="#explore" class="nav-link">Explore</a>
+      </nav>
+      <div class="header-status" role="status">
+        <span class="live-dot" id="headerDot" aria-hidden="true"></span>
+        <span id="headerStatusText">Connecting…</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ HERO / LIVE COUNT ============ -->
+    <section class="hero" aria-labelledby="pageTitle">
+      <!-- Replace the image by dropping a file at public/assets/nocturn-background.jpg.
+           Text stays readable via the overlay; if no image exists the gradient fallback shows. -->
+      <div class="hero-backdrop" aria-hidden="true"></div>
+      <div class="hero-veil" aria-hidden="true"></div>
+
+      <div class="container hero-inner" id="players">
+        <p class="eyebrow">Nocturn Minecraft network &middot; Minehut + MineKeep</p>
+        <h1 class="hero-title" id="pageTitle">Nocturn Players</h1>
+
+        <div class="total-block" aria-live="polite">
+          <div class="total-number" id="totalNumber" aria-label="Total players online">—</div>
+          <div class="total-label" id="totalLabel">Players online</div>
+          <p class="total-sub" id="totalSub">Checking both servers…</p>
+        </div>
+
+        <!-- Minehut + MineKeep = Total -->
+        <div class="equation" aria-label="Minehut plus MineKeep equals total Nocturn players">
+          <article class="provider-card" aria-labelledby="mhTitle">
+            <div class="provider-head">
+              <h2 class="provider-name" id="mhTitle">Minehut</h2>
+              <span class="provider-tag" id="mhTag">NocturnMH</span>
+            </div>
+            <div class="provider-count" id="mhWrap"><span id="mhCount">—</span> <span class="unit">players</span></div>
+            <p class="provider-meta" id="mhMeta">Connecting…</p>
+          </article>
+
+          <span class="equation-symbol" aria-hidden="true">+</span>
+
+          <article class="provider-card" aria-labelledby="mkTitle">
+            <div class="provider-head">
+              <h2 class="provider-name" id="mkTitle">MineKeep</h2>
+              <span class="provider-tag" id="mkTag">Nocturn</span>
+            </div>
+            <div class="provider-count" id="mkWrap"><span id="mkCount">—</span> <span class="unit">players</span></div>
+            <p class="provider-meta" id="mkMeta">Connecting…</p>
+          </article>
+
+          <span class="equation-symbol" aria-hidden="true">=</span>
+
+          <article class="provider-card is-total" aria-labelledby="totalCardTitle">
+            <div class="provider-head">
+              <h2 class="provider-name" id="totalCardTitle">Total</h2>
+              <span class="provider-tag">Both servers</span>
+            </div>
+            <div class="provider-count" id="totalWrap"><span id="totalCardCount">—</span> <span class="unit">players</span></div>
+            <p class="provider-meta" id="totalCardMeta">Combined count</p>
+          </article>
+        </div>
+
+        <div class="hero-foot">
+          <p class="updated-line">
+            <span class="live-dot sm" id="heroDot" aria-hidden="true"></span>
+            <span id="liveLabel">Connecting</span>
+            <span class="sep" aria-hidden="true">&middot;</span>
+            <span id="updatedAgo">Updated just now</span>
+          </p>
+          <div class="hero-actions">
+            <button class="btn ghost" id="refreshBtn" type="button">
+              <span class="btn-spinner" id="refreshSpinner" aria-hidden="true"></span>
+              Refresh now
+            </button>
+            <a class="btn subtle" href="#alert">Set player alert</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PLAYER ALERT ============ -->
+    <section class="section" id="alert" aria-labelledby="alertTitle">
+      <div class="container narrow">
+        <article class="card alert-card">
+          <div>
+            <h2 class="card-title" id="alertTitle">Player alert</h2>
+            <p class="card-sub">Get a ping when the <strong>combined</strong> Minehut + MineKeep total hits your threshold.</p>
+            <form class="alert-form" id="alertForm">
+              <label class="field" for="thresholdInput">
+                <span class="field-label">Notify me at</span>
+                <span class="field-row">
+                  <input id="thresholdInput" name="threshold" type="number" min="1" max="999" step="1" value="3" inputmode="numeric" />
+                  <span class="field-suffix">players</span>
+                </span>
+              </label>
+              <div class="alert-buttons">
+                <button class="btn primary" id="notifyBtn" type="button">Enable notifications</button>
+                <button class="btn ghost" id="testBtn" type="button">Send test ping</button>
+              </div>
+            </form>
+            <p class="alert-status" id="alertStatus" role="status">Notifications off. Your threshold is saved on this device.</p>
+            <p class="alert-hint" id="notifySupport"></p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ EXPANDABLE FEATURE GRID ============ -->
+    <!--
+      FUTURE FEATURES: add ~9-10 cards here.
+      Copy the commented example below, swap the title/text/link.
+      The grid (.feature-grid) grows naturally: 3 cols desktop, 2 tablet, 1 mobile.
+      Keep each card to: icon (optional), h3, p, small link. No layout changes needed.
+      Example:
+      <a class="feature-card" href="./map">
+        <h3>Live Map</h3>
+        <p>See where everyone is building right now.</p>
+        <span class="feature-link">Open map →</span>
+      </a>
+    -->
+    <section class="section" id="explore" aria-labelledby="exploreTitle">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title" id="exploreTitle">Explore Nocturn</h2>
+          <p class="section-sub">More ways into the server. New cards slot straight into this grid.</p>
+        </div>
+        <div class="feature-grid" id="featureGrid">
+          <a class="feature-card" href="#players">
+            <h3>Server status</h3>
+            <p>Live Minehut + MineKeep counts, refreshed automatically.</p>
+            <span class="feature-link">View above →</span>
+          </a>
+          <a class="feature-card" href="#alert">
+            <h3>Player alerts</h3>
+            <p>Get pinged when enough players are on to join.</p>
+            <span class="feature-link">Set alert →</span>
+          </a>
+          <div class="feature-card is-soon" aria-disabled="true">
+            <h3>Coming soon</h3>
+            <p>Reserved slot — drop the next feature card here.</p>
+            <span class="feature-link muted">Slot 3 of ~12</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="wordmark-text sm">NOCTURN</span>
+        <p class="footer-note">&copy; <span id="year">2026</span> Nocturn. Player counts provided by the Minehut + MineKeep APIs.</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="#players">Players</a>
+        <a href="#alert">Alerts</a>
+        <a href="#explore">Explore</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
