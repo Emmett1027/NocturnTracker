@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Nocturn Players — Live Minehut + MineKeep count</title>
-  <meta name="description" content="Live combined player count for the Nocturn Minecraft network across Minehut (NocturnMH) and MineKeep (Nocturn)." />
+  <title>Nocturn Tracker — Live Player Count</title>
+  <meta name="description" content="Unofficial live viewer for the combined player count of the Nocturn Minecraft network across Minehut (NocturnMH) and MineKeep (Nocturn)." />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0f16'/%3E%3Cpath d='M20.5 6.5A8.5 8.5 0 1 0 25.5 20 6.8 6.8 0 0 1 20.5 6.5Z' fill='%23e5a83b'/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
@@ -13,12 +13,12 @@
 
   <header class="site-header">
     <div class="container header-inner">
-      <a class="wordmark" href="./" aria-label="Nocturn home">
+      <a class="wordmark" href="./" aria-label="Nocturn Tracker home">
         <svg class="wordmark-mark" viewBox="0 0 32 32" aria-hidden="true">
           <rect width="32" height="32" rx="7" fill="#161c26"/>
           <path d="M20.5 6.5A8.5 8.5 0 1 0 25.5 20 6.8 6.8 0 0 1 20.5 6.5Z" fill="#e5a83b"/>
         </svg>
-        <span class="wordmark-text">NOCTURN</span>
+        <span class="wordmark-text">NOCTURN TRACKER</span>
       </a>
       <nav class="site-nav" aria-label="Primary">
         <a href="#players" class="nav-link is-active">Players</a>
@@ -41,7 +41,7 @@
       <div class="hero-veil" aria-hidden="true"></div>
 
       <div class="container hero-inner" id="players">
-        <p class="eyebrow">Nocturn Minecraft network &middot; Minehut + MineKeep</p>
+        <p class="eyebrow">Unofficial live viewer &middot; Minehut + MineKeep</p>
         <h1 class="hero-title" id="pageTitle">Nocturn Players</h1>
 
         <div class="total-block" aria-live="polite">
@@ -172,8 +172,8 @@
   <footer class="site-footer">
     <div class="container footer-inner">
       <div class="footer-brand">
-        <span class="wordmark-text sm">NOCTURN</span>
-        <p class="footer-note">&copy; <span id="year">2026</span> Nocturn. Player counts provided by the Minehut + MineKeep APIs.</p>
+        <span class="wordmark-text sm">NOCTURN TRACKER</span>
+        <p class="footer-note">&copy; <span id="year">2026</span> Nocturn Tracker. Unofficial viewer — not affiliated with Nocturn. Counts by the Minehut + MineKeep APIs.</p>
       </div>
       <nav class="footer-links" aria-label="Footer">
         <a href="#players">Players</a>
@@ -183,6 +183,7 @@
     </div>
   </footer>
 
-  <script type="module" src="./app.js"></script>
+  <script src="./config.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>

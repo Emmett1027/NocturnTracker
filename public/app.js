@@ -1,4 +1,5 @@
-import { CONFIG } from "./config.js";
+/* CONFIG is defined in config.js, loaded as a classic script before this one.
+   No modules, no backend — the page works from file:// or any static host. */
 
 const $ = (id) => document.getElementById(id);
 
@@ -30,17 +31,26 @@ const els = {
 
 els.year.textContent = String(new Date().getFullYear());
 
+const memoryStore = {};
+function lsGet(key) {
+  try { return localStorage.getItem(key); }
+  catch { return key in memoryStore ? memoryStore[key] : null; }
+}
+function lsSet(key, value) {
+  try { localStorage.setItem(key, value); }
+  catch { memoryStore[key] = value; }
+}
+
 const store = {
   get threshold() {
-    const raw = localStorage.getItem(CONFIG.storageKeys.threshold);
-    const n = Number.parseInt(raw ?? "", 10);
+    const n = Number.parseInt(lsGet(CONFIG.storageKeys.threshold) ?? "", 10);
     return Number.isFinite(n) && n >= 1 ? n : CONFIG.defaultAlertThreshold;
   },
-  set threshold(v) { localStorage.setItem(CONFIG.storageKeys.threshold, String(v)); },
-  get notifyEnabled() { return localStorage.getItem(CONFIG.storageKeys.notifyEnabled) === "1"; },
-  set notifyEnabled(v) { localStorage.setItem(CONFIG.storageKeys.notifyEnabled, v ? "1" : "0"); },
-  get wasAbove() { return localStorage.getItem(CONFIG.storageKeys.wasAbove) === "1"; },
-  set wasAbove(v) { localStorage.setItem(CONFIG.storageKeys.wasAbove, v ? "1" : "0"); }
+  set threshold(v) { lsSet(CONFIG.storageKeys.threshold, String(v)); },
+  get notifyEnabled() { return lsGet(CONFIG.storageKeys.notifyEnabled) === "1"; },
+  set notifyEnabled(v) { lsSet(CONFIG.storageKeys.notifyEnabled, v ? "1" : "0"); },
+  get wasAbove() { return lsGet(CONFIG.storageKeys.wasAbove) === "1"; },
+  set wasAbove(v) { lsSet(CONFIG.storageKeys.wasAbove, v ? "1" : "0"); }
 };
 
 els.thresholdInput.value = String(store.threshold);
@@ -129,12 +139,13 @@ function render(data) {
   maybeNotify(total);
 }
 
-// ---------- Static-host fallback (GitHub Pages etc.) ----------
-// Same normalization rules as server.js: Minehut count from
+// ---------- Live data: direct browser calls, no backend ----------
+// Both upstream APIs allow CORS, so the page fetches them straight from
+// the visitor's browser. Same rules as before: Minehut count from
 // server.playerCount; MineKeep count from the server named "Nocturn"
 // (case-insensitive, never by array position); failures stay
 // `unavailable` and are never silently treated as zero.
-async function fetchJsonDirect(url, ms = 8000) {
+async function fetchJson(url, ms = 8000) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), ms);
   try {
@@ -146,10 +157,10 @@ async function fetchJsonDirect(url, ms = 8000) {
   }
 }
 
-async function fetchDirectPayload() {
+async function fetchPayload() {
   const [mh, mk] = await Promise.allSettled([
-    fetchJsonDirect(CONFIG.minehutApi),
-    fetchJsonDirect(CONFIG.minekeepApi)
+    fetchJson(CONFIG.minehutApi),
+    fetchJson(CONFIG.minekeepApi)
   ]);
 
   let minehut = { online: false, players: null, maxPlayers: null, name: CONFIG.minehutServer, unavailable: true };
@@ -199,20 +210,12 @@ async function load({ manual = false } = {}) {
   els.refreshSpinner.classList.add("is-loading");
   els.refreshBtn.disabled = manual;
   try {
-    const res = await fetch(CONFIG.playersEndpoint, { cache: "no-store" });
-    if (!res.ok) throw new Error(`API ${res.status}`);
-    const data = await res.json();
+    // No backend: the browser calls the Minehut + MineKeep APIs directly.
+    // Both allow CORS (Access-Control-Allow-Origin: *).
+    const data = await fetchPayload();
     lastSuccessAt = Date.now();
     render(data);
-  } catch (backendErr) {
-    // No /api/players backend (e.g. static GitHub Pages hosting) —
-    // fall back to calling the upstream APIs directly from the browser.
-    // Both allow CORS (Access-Control-Allow-Origin: *).
-    try {
-      const data = await fetchDirectPayload();
-      lastSuccessAt = Date.now();
-      render(data);
-    } catch {
+  } catch {
     // Keep last good numbers on screen; only flip status to indicate staleness.
     if (lastSuccessAt === null) {
       render({ minehut: { unavailable: true }, minekeep: { unavailable: true }, total: null });
@@ -220,7 +223,6 @@ async function load({ manual = false } = {}) {
       els.liveLabel.textContent = "Reconnecting";
       els.headerStatusText.textContent = "Reconnecting";
       setDot("partial");
-    }
     }
   } finally {
     fetching = false;

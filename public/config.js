@@ -1,9 +1,11 @@
 // Central configuration — change values here instead of hunting through code.
-export const CONFIG = {
-  brand: "Nocturn",
+// Plain classic script (no modules), loaded before app.js, so the page works
+// straight from file:// as well as any static host. No backend needed.
+const CONFIG = {
+  brand: "Nocturn Tracker",
   siteTitle: "Nocturn Players",
 
-  // How often the frontend re-fetches /api/players (ms). 15–30s recommended.
+  // How often the page re-fetches both server APIs (ms). 15–30s recommended.
   refreshInterval: 20000,
 
   // Default "notify me when N or more players are online" threshold.
@@ -13,12 +15,10 @@ export const CONFIG = {
   minehutServer: "NocturnMH",
   minekeepServer: "Nocturn",
 
-  // Upstream APIs (used server-side only; frontend talks to /api/players).
+  // Upstream APIs, called directly from the visitor's browser.
+  // Both allow CORS (Access-Control-Allow-Origin: *).
   minehutApi: "https://api.minehut.com/server/NocturnMH?byName=true",
   minekeepApi: "https://api.minekeep.net/v1/servers",
-
-  // Internal normalized endpoint.
-  playersEndpoint: "/api/players",
 
   // localStorage keys for alert prefs.
   storageKeys: {
